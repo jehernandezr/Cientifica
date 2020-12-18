@@ -43,10 +43,8 @@ class Clase:
         return 1 / C_m * (I - G_na * (m**3) * h * (V_m - E_na) - G_k *
                           (n**4) * (V_m - E_k) - G_l * (V_m - E_l))
 
-    def euler_forward(self, h=0.01, m_0=1., n_0=0.,
-                      h_0=0.04, V_0=-2, t_0=0, t_f=10):
-        T = np.arange(t_0, t_f + h, h)
-        I = 20. * np.ones(len(T))
+    def euler_forward(self,T,I, h=0.01, m_0=1., n_0=0.,
+                      h_0=0.04, V_0=-2, t_0=0, t_f=10,):
         m_euler = np.zeros(len(T))
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
@@ -73,10 +71,9 @@ class Clase:
             n_euler + h * self.n(X[0], X[2], t) - X[2],
             h_euler + h * self.h(X[0], X[3], t) - X[3]]
         
-    def euler_backward(self, h=0.01, m_0=1., n_0=0.,
+    def euler_backward(self, T,I, h=0.01, m_0=1., n_0=0.,
                       h_0=0.04, V_0=-2, t_0=0, t_f=10):
-        T = np.arange(t_0, t_f + h, h)
-        I = 20. * np.ones(np.size(T))
+
         m_euler = np.zeros(len(T))
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
@@ -105,10 +102,8 @@ class Clase:
                 h_euler + (h/2.0) * (self.h(V_euler, h_euler, t) + self.h(X[0], X[3], t)) - X[3]]        
         
     
-    def euler_modificado(self, h=0.01, m_0=1., n_0=0.,
+    def euler_modificado(self, T,I,h=0.01, m_0=1., n_0=0.,
                       h_0=0.04, V_0=-2, t_0=0, t_f=10):
-        T = np.arange(t_0, t_f + h, h)
-        I = 20. * np.ones(np.size(T))
         m_euler = np.zeros(len(T))
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
@@ -130,10 +125,8 @@ class Clase:
         
         return T, V_euler
     
-    def rk2(self, h=0.01, m_0=1., n_0=0.,
+    def rk2(self, T,I,h=0.01, m_0=1., n_0=0.,
                       h_0=0.04, V_0=-2, t_0=0, t_f=10):
-        T = np.arange(t_0, t_f + h, h)
-        I = 20. * np.ones(np.size(T))
         V_RK2 = np.zeros(len(T))
         m_RK2 = np.zeros(len(T))
         h_RK2 = np.zeros(len(T))
@@ -161,10 +154,9 @@ class Clase:
             n_RK2[i] = n_RK2[i-1]+(h/2)*(n_K1+n_K2)
         return T, V_RK2
     
-    def rk4 (self, h=0.01, m_0=1., n_0=0.,
+    def rk4 (self, T,I,h=0.01, m_0=1., n_0=0.,
                       h_0=0.04, V_0=-2, t_0=0, t_f=10):
-        T = np.arange(t_0, t_f + h, h)
-        I = 20. * np.ones(np.size(T))
+
     
         V_RK4 = np.zeros(len(T))
         m_RK4 = np.zeros(len(T))

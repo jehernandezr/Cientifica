@@ -81,6 +81,7 @@ ti = 0
 tf=0
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
+
 def fija():
     calcula_fija()
 
@@ -128,10 +129,18 @@ def calcula_variable():
 metodos = tk.Frame(master=window)
 metodos.config(bg = color_frame ,highlightbackground =highlightbg, highlightthickness=1)
 metodos.place(x=700,y=360,relwidth=0.3, relheight=0.35)
+plt.style.use('seaborn-darkgrid')
+fig = plt.Figure(figsize=(4.55, 3), dpi=100)
+Plot = FigureCanvasTkAgg(fig, master=window)
+Plot.draw()
+Plot.get_tk_widget().place(x=70, y=106)
 #Botones de los metodos que se usan
 #FUNCIONES
 def eulerFW():
-    pass
+    rango, euler = Clase.euler_forward(T, I)
+    fig.add_subplot(111).plot(rango, euler)  # subplot(filas, columnas, item)
+
+
 def eulerBW():
     pass
 
