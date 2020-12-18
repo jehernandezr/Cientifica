@@ -78,10 +78,13 @@ colorTextoO='#f7f7f7'
 #Arregolo de tiempo
 h = 0.01
 ti = 0
-tf=0
+tf=150
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
-
+e_for=np.zeros([])
+e_back=np.zeros([])
+e_mod=np.zeros([])
+e_mod=np.zeros([])
 def fija():
     calcula_fija()
 
@@ -89,7 +92,7 @@ def Current_var():
     calcula_variable()
 
 lbl_corrienteFija= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Fija",font=('Roboto',15,'bold')).grid(row=0,column=0,padx=20,columnspan=2)
-lbl_corrienteVar= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Fija",font=('Roboto',15,'bold')).grid(row=1,column=0,padx=20,columnspan=2)
+lbl_corrienteVar= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Variable",font=('Roboto',15,'bold')).grid(row=1,column=0,padx=20,columnspan=2)
 valor_opcion =  tk.IntVar()
 corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,variable=valor_opcion,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
 corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,variable=valor_opcion,bg=color_frame).grid(row=1,column=2,padx=20)
@@ -118,65 +121,100 @@ def calcula_fija():
     I = 20.0 * np.ones(np.size(T))
 
 def calcula_variable():
-    I = np.zeros(np.size(T))
-    Ii = np.where((T >= float(str(val_11))) & (T <= float(str(val_12))))
-    I[Ii] = float(str(val_13))
-    Ii = np.where((T >= int(float(str(val_21)))) & (T <= int(float(str(val_22)))))
-    I[Ii] = float(str(val_23))
+    print(val_22.get())
+
 
 
 #                       VENTANA METODOS
 metodos = tk.Frame(master=window)
 metodos.config(bg = color_frame ,highlightbackground =highlightbg, highlightthickness=1)
-metodos.place(x=700,y=360,relwidth=0.3, relheight=0.35)
+metodos.place(x=700,y=360,relwidth=0.3, relheight=0.4)
+
+
+
+# --------------VENTANA GRAFICA
+grafica =  tk.Frame(master=window)
+grafica.config(bg = color_frame , highlightbackground =highlightbg, highlightthickness=1)
+grafica.place(x=80,y=20,relwidth=0.5, relheight=0.5)
 plt.style.use('seaborn-darkgrid')
-fig = plt.Figure(figsize=(4.55, 3), dpi=100)
-Plot = FigureCanvasTkAgg(fig, master=window)
-Plot.draw()
-Plot.get_tk_widget().place(x=70, y=106)
+fig = plt.Figure(figsize=(5.378, 3.578), dpi=100)
+
+Plot = FigureCanvasTkAgg(fig, master=grafica)
+
+#------------------------------------------------
+
+
+
+
 #Botones de los metodos que se usan
 #FUNCIONES
 def eulerFW():
-    rango, euler = Clase.euler_forward(T, I)
-    fig.add_subplot(111).plot(rango, euler)  # subplot(filas, columnas, item)
-
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.euler_forward(T, I)
+    fig.add_subplot().plot(rango, euler,c='yellow',label="Euler Forw")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 
 def eulerBW():
-    pass
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.euler_backward(T, I)
+    fig.add_subplot(111).plot(rango, euler, c='blue', label="Euler Back",linestyle="--")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 
+def eulerMod():
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.euler_modificado(T, I)
+    fig.add_subplot(111).plot(rango, euler, c='red', label="Euler Mod")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 def RK2():
-    pass
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.rk2(T, I)
+    fig.add_subplot(111).plot(rango, euler, c='violet', label="Runge–K2")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 
 def RK4():
-    pass
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.rk4(T, I)
+    fig.add_subplot(111).plot(rango, euler, c='cyan', label="Runge–K4")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 
 def Odeint():
-    pass
+    ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
+    rango, euler = ecuaciones.rk4(T, I)
+    fig.add_subplot(111).plot(rango, euler, c='green', label="Odeint")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
 
 color_labelF='#084DA6'
 colorTextoF='#f7f7f7'
 lbl_funciones = tk.Label(master=metodos, fg=colorTexto, bg=color_label_titulo,   font=('Roboto', 11, 'bold italic'),text= "Métodos de Solución",width=37).place(x=1 , y =1)
 btn_eulerAdelante = tk.Button(master=metodos,  bg="#021526", fg=colorTexto,relief='flat',font=('Roboto',11), width=11,text='Euler adelante', command=eulerFW).place(x=120, y = 50)
 btn_eulerAtras = tk.Button(master= metodos,  bg="#021526", fg=colorTexto,relief='flat',font=('Roboto',11), width=11,text='Euler atras', command=eulerBW).place(x=120,y=90)
-btn_RK2 = tk.Button(master =metodos, bg="#021526", fg=colorTexto,relief='flat',text="Rugge-Kutta 2",font=('Roboto',11), width=11,command=RK2).place(x=120,y=130)
+btn_eulerMod = tk.Button(master= metodos,  bg="#021526", fg=colorTexto,relief='flat',font=('Roboto',11), width=11,text='Euler Modif', command=eulerMod).place(x=120,y=130)
+
+
+btn_RK2 = tk.Button(master =metodos, bg="#021526", fg=colorTexto,relief='flat',text="Rugge-Kutta 2",font=('Roboto',11), width=11,command=RK2).place(x=120,y=170)
 btn_RK4=tk.Button(master =metodos,
                    bg="#021526",
                    fg=colorTexto,
                    relief='flat',
-                   text="Rugge-Kutta 4",command=RK4,font=('Roboto',11), width=11).place(x=120,y=170)
+                   text="Rugge-Kutta 4",command=RK4,font=('Roboto',11), width=11).place(x=120,y=210)
 btn_Odeint=tk.Button(master =metodos,
                    bg="#021526",
                    fg=colorTexto,
                    relief='flat',
-                   text="Odeint",command=Odeint,font=('Roboto',11), width=11).place(x=120,y=210)
+                   text="Odeint",command=Odeint,font=('Roboto',11), width=11).place(x=120,y=250)
 
-
-
-
-#                       VENTANA GRAFICA
-grafica =  tk.Frame(master=window)
-grafica.config(bg = color_frame , highlightbackground =highlightbg, highlightthickness=1)
-grafica.place(x=80,y=20,relwidth=0.5, relheight=0.5)
 
 #METODOS DATOS
 def importar():
