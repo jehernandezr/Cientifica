@@ -78,7 +78,7 @@ colorTextoO='#f7f7f7'
 #Arregolo de tiempo
 h = 0.01
 ti = 0
-tf=150
+tf=10
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
 e_for=np.zeros([])
@@ -86,16 +86,29 @@ e_back=np.zeros([])
 e_mod=np.zeros([])
 e_mod=np.zeros([])
 def fija():
-    calcula_fija()
+    global I
+    global tf
+    I = 20.0 * np.ones(np.size(T))
+    print(valor_temperatura.get())
+    tf = float(valor_tempEstimulacion.get())
 
-
+def Current_var():
+    global I
+    global tf
+    global T
+    tf = float(val_22.get())
+    T = np.arange(ti, tf + h, h)
+    I = np.zeros(np.size(T))
+    Ii = np.where((T >= float(val_11.get())) & (T <= float(val_12.get())))
+    I[Ii] = float(val_13.get())
+    Ii = np.where((T >= int(float(val_21.get()))) & (T <= int(float(val_22.get()))))
+    I[Ii] = float(val_23.get())
 
 
 lbl_corrienteFija= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Fija",font=('Roboto',15,'bold')).grid(row=0,column=0,padx=20,columnspan=2)
 lbl_corrienteVar= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Variable",font=('Roboto',15,'bold')).grid(row=1,column=0,padx=20,columnspan=2)
 
-def Current_var():
-    calcula_variable()
+
 #Estos labels no me queda claro si se pueden cambiar o no , en caso de que si no serian labels si no Entrys
 val_11=tk.StringVar()
 entr_info11=tk.Entry(master=opciones,textvariable=val_11,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=5).grid(row=2,column=0,padx=(20,0))
@@ -118,18 +131,6 @@ lbl_amper2=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="nA",fo
 
 corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
 corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,bg=color_frame).grid(row=1,column=2,padx=20)
-
-def calcula_fija():
-    I = 20.0 * np.ones(np.size(T))
-
-def calcula_variable():
-    tf = float(str(val_22.get()))
-    T = np.arange(ti, tf + h, h)
-    I = np.zeros(np.size(T))
-    Ii = np.where((T >= float(str(val_11.get()))) & (T <= float(str(val_12.get()))))
-    I[Ii] = float(str(val_13.get()))
-    Ii = np.where((T >= int(float(str(val_21.get())))) & (T <= int(float(str(val_22.get())))))
-    I[Ii] = float(str(val_23.get()))
 
 
 
@@ -162,6 +163,11 @@ n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
 v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
 
 def act():
+
+    global h_0
+    global m_0
+    global n_0
+    global v_0
     h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
     m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
     n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
