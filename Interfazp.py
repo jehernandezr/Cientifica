@@ -299,7 +299,7 @@ entryfactorRuido = tk.Entry(master=frame1, textvariable = factorRuido, width = 1
 
 
 
-img3=Image.open("salud.jpg")
+img3=Image.open("brain.jpg")
 img3= img3.resize((166, 190))
 img3 = ImageTk.PhotoImage(img3)
 lab3 = tk.Label(image=img3,borderwidth=0)
