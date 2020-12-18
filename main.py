@@ -19,6 +19,7 @@ matplotlib.use("TkAgg")
 # Jonatan Hernadnez
 window = tk.Tk()
 
+#Creación  de la ventana del principal
 window.title('Potencial de acción')
 window.config(cursor="arrow")
 img3=Image.open("image.png")
@@ -94,7 +95,7 @@ tf=10
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
 
-
+#Arreglos donde se guardaran los datos de las funciones para exportar
 y_efor=np.array([])
 y_eback=np.array([])
 y_emod=np.array([])
@@ -169,7 +170,7 @@ metodos.place(x=700,y=360,relwidth=0.3, relheight=0.4)
 #-------------------------------------------------------------------------------------
 
 
-# --------------GRAFICACION------------------
+# --------------VENTANA GRAFICA------------------
 grafica =  tk.Frame(master=window)
 grafica.config(bg = color_frame , highlightbackground =highlightbg, highlightthickness=1)
 grafica.place(x=80,y=20,relwidth=0.5, relheight=0.5)
@@ -203,7 +204,7 @@ def act():
     v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
 
 
-#---ZONA DE METODOS DE SOLUCION EDO
+#---ZONA DE METODOS DE SOLUCION 
 def eulerFW():
     global y_efor
     act()
@@ -302,7 +303,7 @@ def exportar():
     global y_rk2
     global y_rk4
     global y_odeint
-
+    #Se utilizan las funciones nativas de numpy para guardar y crear arreglos de ficheros externos
     np.savetxt('efor.csv',y_efor,delimiter= ",")
     np.savetxt('eback.csv',y_eback,delimiter= ",")
     np.savetxt('emod.csv',y_emod,delimiter= ",")
