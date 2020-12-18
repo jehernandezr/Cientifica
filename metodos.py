@@ -206,9 +206,7 @@ class Clase:
         return [self.V(V_0, m_0, n_0,h_0,20),self.m(V_0, m_0,self.t),self.n(V_0,n_0,self.t),self.h(V_0,h_0,self.t)]
 
 
-    def OdeInt(self,V_m,m,n,h,I,T):
-        self.corriente=I
-        self.tiempo=T
+    def OdeInt(self,V_m,m,n,h,T):
         sol=odeint(self.Od_aux,[V_m,m,n,h],T)
 
         return  sol[:,0]

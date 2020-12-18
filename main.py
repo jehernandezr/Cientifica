@@ -19,6 +19,7 @@ matplotlib.use("TkAgg")
 # Jonatan Hernadnez
 window = tk.Tk()
 
+#Creación  de la ventana del principal
 window.title('Potencial de acción')
 window.config(cursor="arrow")
 img3=Image.open("image.png")
@@ -94,7 +95,7 @@ tf=10
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
 
-
+#Arreglos donde se guardaran los datos de las funciones para exportar
 y_efor=np.array([])
 y_eback=np.array([])
 y_emod=np.array([])
@@ -169,7 +170,7 @@ metodos.place(x=700,y=360,relwidth=0.3, relheight=0.4)
 #-------------------------------------------------------------------------------------
 
 
-# --------------GRAFICACION------------------
+# --------------VENTANA GRAFICA------------------
 grafica =  tk.Frame(master=window)
 grafica.config(bg = color_frame , highlightbackground =highlightbg, highlightthickness=1)
 grafica.place(x=80,y=20,relwidth=0.5, relheight=0.5)
@@ -197,15 +198,13 @@ def act():
         fija()
     elif opcion.get()==2:
         Current_var()
-
-    print(opcion.get())
     h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
-    m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
+    m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005)
     n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
     v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
 
 
-#---ZONA DE METODOS DE SOLUCION EDO
+#---ZONA DE METODOS DE SOLUCION
 def eulerFW():
     global y_efor
     act()
@@ -264,7 +263,7 @@ def Odeint():
     global y_odeint
     act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    odi = ecuaciones.OdeInt(v_0,m_0,h_0,n_0,I,T)
+    odi = ecuaciones.OdeInt(v_0,m_0,h_0,n_0,T)
     fig.add_subplot(111).plot(T, odi, c='green', label="Odeint")
     fig.legend()
     y_odeint = odi
@@ -298,13 +297,13 @@ btn_Odeint=tk.Button(master =metodos,
 
 #METODOS DATOS
 def exportar():
-    global y_efor   
+    global y_efor
     global y_eback
     global y_emod
     global y_rk2
     global y_rk4
     global y_odeint
-
+    #Se utilizan las funciones nativas de numpy para guardar y crear arreglos de ficheros externos
     np.savetxt('efor.csv',y_efor,delimiter= ",")
     np.savetxt('eback.csv',y_eback,delimiter= ",")
     np.savetxt('emod.csv',y_emod,delimiter= ",")
