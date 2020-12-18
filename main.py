@@ -81,10 +81,12 @@ ti = 0
 tf=10
 T = np.arange(ti, tf + h, h)
 I = 20.0 * np.ones(np.size(T))
-e_for=np.zeros([])
-e_back=np.zeros([])
-e_mod=np.zeros([])
-e_mod=np.zeros([])
+y_efor=np.array([])
+y_eback=np.array([])
+y_emod=np.array([])
+y_rk2=np.array([])
+y_rk4 = np.array([])
+y_odeint = np.array([])
 def fija():
     global I
     global tf
@@ -179,52 +181,64 @@ def act():
 
 
 def eulerFW():
+    global y_efor
     act()
     valor=val_11.get()
     print(valor + "Este es el valor")
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_forward(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
+    y_efor= euler
     fig.add_subplot().plot(rango, euler,c='yellow',label="Euler Forw")
     fig.legend()
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
 def eulerBW():
+    global y_eback
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_backward(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='blue', label="Euler Back",linestyle="--")
+    y_eback = euler
     fig.legend()
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
 def eulerMod():
+    global y_emod
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_modificado(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='red', label="Euler Mod")
+    y_emod = euler
     fig.legend()
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 def RK2():
+    global y_rk2
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.rk2(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='violet', label="Runge–K2")
+    y_rk2 = euler
     fig.legend()
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
 def RK4():
+    global y_rk4
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='cyan', label="Runge–K4")
     fig.legend()
+    y_rk4 = euler
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
 def Odeint():
+    global y_odeint
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='green', label="Odeint")
     fig.legend()
+    y_odeint = euler
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
@@ -250,10 +264,58 @@ btn_Odeint=tk.Button(master =metodos,
 
 
 #METODOS DATOS
-def importar():
-    pass
-def exportar ():
-    pass
+def exportar():
+    global y_efor   
+    global y_eback
+    global y_emod
+    global y_rk2
+    global y_rk4
+    global y_odeint
+
+    np.savetxt('efor.csv',y_efor,delimiter= ",")
+    np.savetxt('eback.csv',y_eback,delimiter= ",")
+    np.savetxt('emod.csv',y_emod,delimiter= ",")
+    np.savetxt('rk2.csv',y_rk2,delimiter= ",")
+    np.savetxt('rk4.csv',y_rk4,delimiter= ",")
+    np.savetxt('odeint.csv',y_odeint,delimiter= ",")
+
+def importar ():
+    global y_efor
+    global y_eback
+    global y_emod
+    global y_rk2
+    global y_rk4
+    global y_odeint
+    global T
+
+    y_efor = np.loadtxt('efor.csv',delimiter= ",")
+    y_eback =np.loadtxt('eback.csv',delimiter= ",")
+    y_emod = np.loadtxt('emod.csv',delimiter= ",")
+    y_rk2 =  np.loadtxt('rk2.csv',delimiter= ",")
+    y_rk4 =  np.loadtxt('rk4.csv',delimiter= ",")
+    y_odeint =np.loadtxt('odeint.csv',delimiter= ",")
+    fig.add_subplot().plot(T, y_efor,c='yellow',label="Euler Forw")
+    fig.legend()
+    Plot.draw()
+    Plot.get_tk_widget().place(x=0, y=0)
+    fig.add_subplot().plot(T, y_eback,c='blue',label="Euler Back",linestyle="--")
+    fig.legend()
+    Plot.draw()
+    fig.add_subplot().plot(T, y_emod,c='red',label="Euler Mod")
+    fig.legend()
+    Plot.draw()
+    fig.add_subplot().plot(T, y_efor,c='violet',label="Runge–K2")
+    fig.legend()
+    Plot.draw()
+    fig.add_subplot().plot(T, y_efor,c='cyan',label="Runge–K4")
+    fig.legend()
+    Plot.draw()
+    fig.add_subplot().plot(T, y_efor,c='green',label="Odeint")
+    fig.legend()
+    Plot.draw()
+    
+
+
 
 #                      BOTONES
 btn_exportar = tk.Button(master= window, bg="#021526",
