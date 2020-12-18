@@ -1,12 +1,16 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
+from scipy.integrate.odepack import odeint
 import scipy.optimize as opt
 
 def phi(t):
     q_10 = 3
     t_base = 6.3
     return q_10 ** ((t - t_base) / 10)
+
+
+
 
 class Clase:
 
@@ -101,7 +105,6 @@ class Clase:
                 n_euler + (h/2.0) * (self.n(V_euler, n_euler, t) + self.n(X[0], X[2], t)) - X[2],
                 h_euler + (h/2.0) * (self.h(V_euler, h_euler, t) + self.h(X[0], X[3], t)) - X[3]]        
         
-    
     def euler_modificado(self, T,I,h=0.01, m_0=1., n_0=0.,
                       h_0=0.04, V_0=-2, t_0=0, t_f=10):
         m_euler = np.zeros(len(T))
@@ -196,6 +199,8 @@ class Clase:
             n_RK4[i] = n_RK4[i - 1] + (h / 6) * (n_K1 + 2 * n_K2 + 2 * n_K3 + n_K4)
         return T, V_RK4
     
+
+
 """clase = Clase(6.3)
 
 

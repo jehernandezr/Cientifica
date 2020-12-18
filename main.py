@@ -88,14 +88,14 @@ e_mod=np.zeros([])
 def fija():
     calcula_fija()
 
-def Current_var():
-    calcula_variable()
+
+
 
 lbl_corrienteFija= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Fija",font=('Roboto',15,'bold')).grid(row=0,column=0,padx=20,columnspan=2)
 lbl_corrienteVar= tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="Corriente Variable",font=('Roboto',15,'bold')).grid(row=1,column=0,padx=20,columnspan=2)
-valor_opcion =  tk.IntVar()
-corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,variable=valor_opcion,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
-corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,variable=valor_opcion,bg=color_frame).grid(row=1,column=2,padx=20)
+
+def Current_var():
+    calcula_variable()
 #Estos labels no me queda claro si se pueden cambiar o no , en caso de que si no serian labels si no Entrys
 val_11=tk.StringVar()
 entr_info11=tk.Entry(master=opciones,textvariable=val_11,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=5).grid(row=2,column=0,padx=(20,0))
@@ -103,25 +103,33 @@ lbl_=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="__",font=('R
 lbl_amper=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="nA",font=('Roboto',15,'bold')).grid(row=2,column=5)
 lbl__=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="__",font=('Roboto',15,'bold')).grid(pady=10,row=3,column=1)
 val_12=tk.StringVar()
-entr_info12=tk.Entry(master=opciones,textvariable=val_12,fg=colorTextoO,bg=color_labelO, text="5",font=('Roboto',15,'bold'),width=5).grid(pady=20,padx=(20,0),row=2,column=2)
+entr_info12=tk.Entry(master=opciones,textvariable=val_12,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=5).grid(pady=20,padx=(20,0),row=2,column=2)
 lbl_mS1=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="mS",font=('Roboto',15,'bold'),width=5).grid(padx=(0,5),row=2,column=3)
 val_13=tk.StringVar()
-entr_info13=tk.Entry(master=opciones,textvariable=val_13,fg=colorTextoO,bg=color_labelO, text="15",font=('Roboto',15,'bold'),width=6).grid(row=2,column=4,padx=(20,1))
+entr_info13=tk.Entry(master=opciones,textvariable=val_13,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=6).grid(row=2,column=4,padx=(20,1))
 val_21=tk.StringVar()
-entr_info21=tk.Entry(master=opciones,textvariable=val_21,fg=colorTextoO,bg=color_labelO, text="10",font=('Roboto',15,'bold'),width=5).grid(pady=10,padx=(20,0),row=3,column=0)
+entr_info21=tk.Entry(master=opciones,textvariable=val_21,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=5).grid(pady=10,padx=(20,0),row=3,column=0)
 val_22=tk.StringVar()
-entr_info22=tk.Entry(master=opciones,textvariable=val_22,fg=colorTextoO,bg=color_labelO, text="20",font=('Roboto',15,'bold'),width=5).grid(padx=(20,0),row=3,column=2)
+entr_info22=tk.Entry(master=opciones,textvariable=val_22,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=5).grid(padx=(20,0),row=3,column=2)
 lbl_mS2=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="mS",font=('Roboto',15,'bold'),width=5).grid(row=3,column=3)
 val_23=tk.StringVar()
-entr_info23=tk.Entry(master=opciones,textvariable=val_23,fg=colorTextoO,bg=color_labelO, text="-20",font=('Roboto',15,'bold'),width=6).grid(pady=10,padx=(20,1),row=3,column=4)
+entr_info23=tk.Entry(master=opciones,textvariable=val_23,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=6).grid(pady=10,padx=(20,1),row=3,column=4)
 lbl_amper2=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="nA",font=('Roboto',15,'bold')).grid(row=3,column=5)
 
+corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
+corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,bg=color_frame).grid(row=1,column=2,padx=20)
 
 def calcula_fija():
     I = 20.0 * np.ones(np.size(T))
 
 def calcula_variable():
-    print(val_22.get())
+    tf = float(str(val_22.get()))
+    T = np.arange(ti, tf + h, h)
+    I = np.zeros(np.size(T))
+    Ii = np.where((T >= float(str(val_11.get()))) & (T <= float(str(val_12.get()))))
+    I[Ii] = float(str(val_13.get()))
+    Ii = np.where((T >= int(float(str(val_21.get())))) & (T <= int(float(str(val_22.get())))))
+    I[Ii] = float(str(val_23.get()))
 
 
 
@@ -149,6 +157,8 @@ Plot = FigureCanvasTkAgg(fig, master=grafica)
 #Botones de los metodos que se usan
 #FUNCIONES
 def eulerFW():
+    valor=val_11.get()
+    print(valor + "Este es el valor")
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_forward(T, I)
     fig.add_subplot().plot(rango, euler,c='yellow',label="Euler Forw")
