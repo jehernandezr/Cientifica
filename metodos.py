@@ -1,9 +1,8 @@
 import numpy as np
 
 import matplotlib.pyplot as plt
-from scipy.integrate.odepack import odeint
 import scipy.optimize as opt
-
+from scipy.integrate import odeint
 def phi(t):
     q_10 = 3
     t_base = 6.3
@@ -16,7 +15,10 @@ class Clase:
 
     def __init__(self, t):
         self.t = t
-
+    @staticmethod
+    def I_a(t):
+        
+        pass
     @staticmethod
     def m(V_m, m, t):
         alpha_m = 0.1 * (V_m + 40) / (1 - np.exp(-(V_m + 40) / 10))
@@ -90,7 +92,7 @@ class Clase:
         
         for i in range(1,len(T)):
             solucion = opt.fsolve(self.euler_back_aux, np.array([V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1]]),\
-        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h))
+        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h),tol=10**-15)
 
             V_euler[i] = solucion[0]
             m_euler[i] = solucion[1]
@@ -106,7 +108,7 @@ class Clase:
                 h_euler + (h/2.0) * (self.h(V_euler, h_euler, t) + self.h(X[0], X[3], t)) - X[3]]        
         
     def euler_modificado(self, T,I,h=0.01, m_0=1., n_0=0.,
-                      h_0=0.04, V_0=-2, t_0=0, t_f=10):
+                      h_0=0.04, V_0=-2):
         m_euler = np.zeros(len(T))
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
@@ -119,7 +121,7 @@ class Clase:
         
         for i in range(1,len(T)):
             solucion = opt.fsolve(self.euler_mod_aux, np.array([V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1]]),\
-        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h))
+        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h),tol=10**-15)
 
             V_euler[i] = solucion[0]
             m_euler[i] = solucion[1]
@@ -198,6 +200,14 @@ class Clase:
             h_RK4[i] = h_RK4[i - 1] + (h / 6) * (h_K1 + 2 * h_K2 + 2 * h_K3 + h_K4)
             n_RK4[i] = n_RK4[i - 1] + (h / 6) * (n_K1 + 2 * n_K2 + 2 * n_K3 + n_K4)
         return T, V_RK4
+
+    def OdeInt_aux(self, X, V, m, n, h, I, fi):
+        return [V,m,n,h,I,fi]
+
+
+    def OdeInt(self,V_0,m_0,h_0,n_0):
+        Resultado = odeint(self.OdeInt_aux, [V_0, m_0, n_0, h_0], t, args=(self.t,))
+
     
 
 
