@@ -197,6 +197,8 @@ def act():
         fija()
     elif opcion.get()==2:
         Current_var()
+
+    print(opcion.get())
     h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
     m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
     n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
@@ -262,7 +264,7 @@ def Odeint():
     global y_odeint
     act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    odi = ecuaciones.OdeInt(v_0,m_0,h_0,n_0,T)
+    odi = ecuaciones.OdeInt(v_0,m_0,h_0,n_0,I,T)
     fig.add_subplot(111).plot(T, odi, c='green', label="Odeint")
     fig.legend()
     y_odeint = odi

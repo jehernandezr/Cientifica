@@ -2,7 +2,9 @@ import numpy as np
 
 import matplotlib.pyplot as plt
 import scipy.optimize as opt
-from scipy.integrate import odeint
+from scipy.integrate import odeint, solve_ivp
+
+
 def phi(t):
     q_10 = 3
     t_base = 6.3
@@ -15,7 +17,6 @@ class Clase:
 
     def __init__(self, t):
         self.t = t
-
     @staticmethod
     def m(V_m, m, t):
         alpha_m = 0.1 * (V_m + 40) / (1 - np.exp(-(V_m + 40) / 10))
@@ -200,17 +201,17 @@ class Clase:
             n_RK4[i] = n_RK4[i - 1] + (h / 6) * (n_K1 + 2 * n_K2 + 2 * n_K3 + n_K4)
         return T, V_RK4
 
-    def Od_aux(self,z,I,fi ,*args):
-        V_0, m_0, n_0,h_0, =z
+    def Od_aux(self,z,I):
+        V_0, m_0, n_0,h_0,=z
+        return [self.V(V_0, m_0, n_0,h_0,20),self.m(V_0, m_0,self.t),self.n(V_0,n_0,self.t),self.h(V_0,h_0,self.t)]
 
-        return [self.V(V_0, m_0, n_0,h_0,I),self.m(V_0, m_0,self.t),self.n(V_0,n_0,self.t),self.h(V_0,h_0,self.t)]
 
+    def OdeInt(self,V_m,m,n,h,I,T):
+        self.corriente=I
+        self.tiempo=T
+        sol=odeint(self.Od_aux,[V_m,m,n,h],T)
 
-    def OdeInt(self,V_m,m,n,h,I):
-        print(V_m,m,n,h,I)
-        sol=odeint(self.Od_aux,[V_m,m,n,h], I,args=(self.t,))
-        print (sol[:, 0])
-        return  sol[:, 0]
+        return  sol[:,0]
 
 
 
