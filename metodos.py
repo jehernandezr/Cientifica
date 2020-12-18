@@ -8,17 +8,14 @@ def phi(t):
     t_base = 6.3
     return q_10 ** ((t - t_base) / 10)
 
-
-
+def I_a(t,I,T):
+    return I[T.index(t)]
 
 class Clase:
 
     def __init__(self, t):
         self.t = t
-    @staticmethod
-    def I_a(t):
-        
-        pass
+
     @staticmethod
     def m(V_m, m, t):
         alpha_m = 0.1 * (V_m + 40) / (1 - np.exp(-(V_m + 40) / 10))
@@ -30,6 +27,7 @@ class Clase:
         alpha_n = 0.01 * (V_m + 55) / (1 - np.exp(-(V_m + 55) / 10))
         beta_n = 0.125 * np.exp(-(V_m + 65) /80)
         return phi(t) * alpha_n * (1 - n) - beta_n * n
+
 
     @staticmethod
     def h(V_m, h, t):
@@ -49,13 +47,14 @@ class Clase:
         return 1 / C_m * (I - G_na * (m**3) * h * (V_m - E_na) - G_k *
                           (n**4) * (V_m - E_k) - G_l * (V_m - E_l))
 
+
+
     def euler_forward(self,T,I, h=0.01, m_0=1., n_0=0.,
-                      h_0=0.04, V_0=-2, t_0=0, t_f=10,):
+                      h_0=0.04, V_0=-2):
         m_euler = np.zeros(len(T))
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
         V_euler = np.zeros(len(T))
-        print( V_0,"Cambio en el Voltaje")
         m_euler[0] = m_0
         n_euler[0] = n_0
         h_euler[0] = h_0
@@ -92,7 +91,7 @@ class Clase:
         
         for i in range(1,len(T)):
             solucion = opt.fsolve(self.euler_back_aux, np.array([V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1]]),\
-        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h),tol=10**-15)
+        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h))
 
             V_euler[i] = solucion[0]
             m_euler[i] = solucion[1]
@@ -120,8 +119,8 @@ class Clase:
         V_euler[0] = V_0
         
         for i in range(1,len(T)):
-            solucion = opt.fsolve(self.euler_mod_aux, np.array([V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1]]),\
-        (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h),tol=10**-15)
+            solucion = opt.fsolve(self.euler_mod_aux, np.array([V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1]]),
+                                  (V_euler[i - 1], m_euler[i - 1], n_euler[i - 1], h_euler[i - 1], I[i], self.t, h))
 
             V_euler[i] = solucion[0]
             m_euler[i] = solucion[1]
@@ -160,7 +159,7 @@ class Clase:
         return T, V_RK2
     
     def rk4 (self, T,I,h=0.01, m_0=1., n_0=0.,
-                      h_0=0.04, V_0=-2, t_0=0, t_f=10):
+                      h_0=0.04, V_0=-2):
 
     
         V_RK4 = np.zeros(len(T))
@@ -201,43 +200,17 @@ class Clase:
             n_RK4[i] = n_RK4[i - 1] + (h / 6) * (n_K1 + 2 * n_K2 + 2 * n_K3 + n_K4)
         return T, V_RK4
 
-    def OdeInt_aux(self, X, V, m, n, h, I, fi):
-        return [V,m,n,h,I,fi]
+    def Od_aux(self,z,I,fi ,*args):
+        V_0, m_0, n_0,h_0, =z
+
+        return [self.V(V_0, m_0, n_0,h_0,I),self.m(V_0, m_0,self.t),self.n(V_0,n_0,self.t),self.h(V_0,h_0,self.t)]
 
 
-    def OdeInt(self,V_0,m_0,h_0,n_0):
-        Resultado = odeint(self.OdeInt_aux, [V_0, m_0, n_0, h_0], t, args=(self.t,))
-
-    
-
-
-"""clase = Clase(6.3)
+    def OdeInt(self,V_m,m,n,h,I):
+        print(V_m,m,n,h,I)
+        sol=odeint(self.Od_aux,[V_m,m,n,h], I,args=(self.t,))
+        print (sol[:, 0])
+        return  sol[:, 0]
 
 
-    
-rango, euler_for = clase.euler_forward(0.01, 0.05, 0.3, 0.65, -65, 0, 500)
 
-plt.plot(rango, euler_for,c='orange',label="Euler Forward")
-
-rango, euler_back = clase.euler_backward(0.01, 0.05, 0.3, 0.65, -65, 0, 500)
-
-plt.plot(rango, euler_back,c='y',label="Euler Backward")
-
-rango, euler_mod = clase.euler_modificado(0.01, 0.05, 0.3, 0.65, -65, 0, 500)
-
-plt.plot(rango, euler_mod,c='b',label="Euler Modificado")
-
-
-rango, RK2 = clase.rk2(0.01, 0.05, 0.3, 0.65, -65, 0, 500)
-
-plt.plot(rango, RK2,c='g',label="RK2")
-
-
-rango, RK4 = clase.rk4(0.01, 0.05, 0.3, 0.65, -65, 0, 500)
-
-
-plt.plot(rango, RK4,c='r',label="RK4")
-plt.legend()
-
-
-plt.show()"""

@@ -91,7 +91,7 @@ def fija():
     global I
     global tf
     global T
-    tf = float(valor_tempEstimulacion.get())
+    tf = ((float(valor_tempEstimulacion.get())) if valor_tempEstimulacion.get() != "" else 150)
     T = np.arange(ti, tf + h, h)
     I = 20.0 * np.ones(np.size(T))
     print(valor_tempEstimulacion.get())
@@ -101,7 +101,7 @@ def Current_var():
     global I
     global tf
     global T
-    tf = float(valor_tempEstimulacion.get())
+    tf = ((float(valor_tempEstimulacion.get())) if valor_tempEstimulacion.get() != "" else 150)
     T = np.arange(ti, tf + h, h)
     I = np.zeros(np.size(T))
     Ii = np.where((T >= float(val_11.get())) & (T <= float(val_12.get())))
@@ -133,9 +133,9 @@ lbl_mS2=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="mS",font=
 val_23=tk.StringVar()
 entr_info23=tk.Entry(master=opciones,textvariable=val_23,fg=colorTextoO,bg=color_labelO,font=('Roboto',15,'bold'),width=6).grid(pady=10,padx=(20,1),row=3,column=4)
 lbl_amper2=tk.Label(master=opciones,fg=colorTextoO,bg=color_labelO, text="nA",font=('Roboto',15,'bold')).grid(row=3,column=5)
-
-corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
-corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,bg=color_frame).grid(row=1,column=2,padx=20)
+opcion = tk.IntVar()
+corrienteFija=tk.Radiobutton(master=opciones,value=1,command=fija,variable=opcion,bg=color_frame).grid(pady=20,row=0,column=2,padx=20)
+corrienteVariable=tk.Radiobutton(master=opciones,value=2,command=Current_var,variable=opcion,bg=color_frame).grid(row=1,column=2,padx=20)
 
 
 
@@ -163,7 +163,7 @@ Plot = FigureCanvasTkAgg(fig, master=grafica)
 #Botones de los metodos que se usan
 #FUNCIONES
 h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
-m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
+m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.05)
 n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
 v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
 
@@ -173,7 +173,10 @@ def act():
     global m_0
     global n_0
     global v_0
-
+    if opcion.get()==1:
+        fija()
+    elif opcion.get()==2:
+        Current_var()
     h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
     m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
     n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
@@ -195,6 +198,7 @@ def eulerFW():
 
 def eulerBW():
     global y_eback
+    act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_backward(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='blue', label="Euler Back",linestyle="--")
@@ -205,6 +209,7 @@ def eulerBW():
 
 def eulerMod():
     global y_emod
+    act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.euler_modificado(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='red', label="Euler Mod")
@@ -214,6 +219,7 @@ def eulerMod():
     Plot.get_tk_widget().place(x=0, y=0)
 def RK2():
     global y_rk2
+    act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.rk2(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='violet', label="Runge–K2")
@@ -224,6 +230,7 @@ def RK2():
 
 def RK4():
     global y_rk4
+    act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
     rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='cyan', label="Runge–K4")
@@ -234,11 +241,12 @@ def RK4():
 
 def Odeint():
     global y_odeint
+    act()
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
-    fig.add_subplot(111).plot(rango, euler, c='green', label="Odeint")
+    odi = ecuaciones.OdeInt(v_0,m_0,h_0,n_0,T)
+    fig.add_subplot(111).plot(T, odi, c='green', label="Odeint")
     fig.legend()
-    y_odeint = euler
+    y_odeint = odi
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 
