@@ -53,7 +53,7 @@ class Clase:
         n_euler = np.zeros(len(T))
         h_euler = np.zeros(len(T))
         V_euler = np.zeros(len(T))
-
+        print( V_0,"Cambio en el Voltaje")
         m_euler[0] = m_0
         n_euler[0] = n_0
         h_euler[0] = h_0

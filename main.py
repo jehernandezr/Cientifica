@@ -1,10 +1,10 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from matplotlib.backend_bases import key_press_handler
 import matplotlib.animation as animation
 import matplotlib
+from numpy.lib.format import read_array_header_1_0
 from numpy.lib.shape_base import take_along_axis
 matplotlib.use("TkAgg")
 import tkinter as tk
@@ -156,11 +156,24 @@ Plot = FigureCanvasTkAgg(fig, master=grafica)
 
 #Botones de los metodos que se usan
 #FUNCIONES
+h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
+m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
+n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
+v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
+
+def act():
+    h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
+    m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
+    n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
+    v_0= ((float(valor_potencial.get())) if valor_potencial.get() != "" else -65)
+
+
 def eulerFW():
+    act()
     valor=val_11.get()
     print(valor + "Este es el valor")
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.euler_forward(T, I)
+    rango, euler = ecuaciones.euler_forward(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot().plot(rango, euler,c='yellow',label="Euler Forw")
     fig.legend()
     Plot.draw()
@@ -168,7 +181,7 @@ def eulerFW():
 
 def eulerBW():
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.euler_backward(T, I)
+    rango, euler = ecuaciones.euler_backward(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='blue', label="Euler Back",linestyle="--")
     fig.legend()
     Plot.draw()
@@ -176,14 +189,14 @@ def eulerBW():
 
 def eulerMod():
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.euler_modificado(T, I)
+    rango, euler = ecuaciones.euler_modificado(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='red', label="Euler Mod")
     fig.legend()
     Plot.draw()
     Plot.get_tk_widget().place(x=0, y=0)
 def RK2():
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.rk2(T, I)
+    rango, euler = ecuaciones.rk2(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='violet', label="Runge–K2")
     fig.legend()
     Plot.draw()
@@ -191,7 +204,7 @@ def RK2():
 
 def RK4():
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.rk4(T, I)
+    rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='cyan', label="Runge–K4")
     fig.legend()
     Plot.draw()
@@ -199,7 +212,7 @@ def RK4():
 
 def Odeint():
     ecuaciones = Clase((float(valor_temperatura.get())) if valor_temperatura.get() != "" else 6.3)
-    rango, euler = ecuaciones.rk4(T, I)
+    rango, euler = ecuaciones.rk4(T, I,h_0=h_0,m_0=m_0,n_0=n_0,V_0=v_0)
     fig.add_subplot(111).plot(rango, euler, c='green', label="Odeint")
     fig.legend()
     Plot.draw()
