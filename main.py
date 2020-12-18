@@ -25,8 +25,8 @@ img3=Image.open("image.png")
 img3 = img3.resize((1080, 720), Image.ANTIALIAS)
 img3 = ImageTk.PhotoImage(img3)
 w = img3.width()
-h = img3.height()
-window.geometry('%dx%d+50+30' % (w,h))
+h_altura = img3.height()
+window.geometry('%dx%d+50+30' % (w,h_altura))
 bg_lab3 = tk.Label(window,image=img3,borderwidth=0)
 bg_lab3.place(x=0, y=0, relwidth=1, relheight=1)
 bg_lab3.image = img3
@@ -88,15 +88,18 @@ e_mod=np.zeros([])
 def fija():
     global I
     global tf
-    I = 20.0 * np.ones(np.size(T))
-    print(valor_temperatura.get())
+    global T
     tf = float(valor_tempEstimulacion.get())
+    T = np.arange(ti, tf + h, h)
+    I = 20.0 * np.ones(np.size(T))
+    print(valor_tempEstimulacion.get())
+
 
 def Current_var():
     global I
     global tf
     global T
-    tf = float(val_22.get())
+    tf = float(valor_tempEstimulacion.get())
     T = np.arange(ti, tf + h, h)
     I = np.zeros(np.size(T))
     Ii = np.where((T >= float(val_11.get())) & (T <= float(val_12.get())))
@@ -168,6 +171,7 @@ def act():
     global m_0
     global n_0
     global v_0
+
     h_0 = ((float(valor_h.get())) if valor_h.get() != "" else 0.7)
     m_0= ((float(valor_m.get())) if valor_m.get() != "" else 0.005) 
     n_0= ((float(valor_n.get())) if valor_n.get() != "" else 0.5)
